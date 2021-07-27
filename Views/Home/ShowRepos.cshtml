@@ -176,7 +176,7 @@
         <td style="float:left">
 
             @Html.Label("Dll to Repository Mapping:", new { style = "valign:top; font-size:20px; font-weight:bold" })&nbsp;&nbsp; <input type="button" id="Next" value="Load" style="padding-top:2px;padding-bottom:2px; width:150px; height:30px; font-size:larger;  vertical-align:top" /> &nbsp;&nbsp;
-            <input type="button" id="Export" value="Export as CSV"  style="padding-top:2px;padding-bottom:2px; width:150px; height:30px; font-size:larger;  vertical-align:top" /> &nbsp;&nbsp;
+            <input type="button" id="Export" value="Export as CSV"  style="padding-top:2px;visibility:hidden;:2px; width:150px; height:30px; font-size:larger;  vertical-align:top" /> &nbsp;&nbsp;
 
         </td>
         <td style="float:right">
@@ -197,7 +197,7 @@
         </td>
     </tr>
 </table>
-<table id="tbldllmapping"  style="background-color:#F9EBE1;  border-color:#DEBA84; border-style:none; border-width:.5px; width: 54%" BorderWidth="1.5px" CellPadding="1" CellSpacing="1" Class="find">
+<table id="tbldllmapping"  style="background-color:#F9EBE1;  border-color:#DEBA84;visibility:hidden; border-style:none; border-width:.5px; width: 54%" BorderWidth="1.5px" CellPadding="1" CellSpacing="1" Class="find">
     <thead style="background-color:#BC6525; font-weight: bold;color:floralwhite; font-size:8pt">
         <tr class="small">
 
@@ -241,12 +241,14 @@
                     $('#tbldll tbody').empty();
                   $.each(data, function (i, item) {
                       document.getElementById('tbldll').style.visibility = "visible";
+                      document.getElementById('tblreptodllheader').style.visibility = "visible";
                       var rows = "<tr>" + "<td style='border-right: solid; border - color:#BC6525; font - size: 8pt; color:#BC6525; border - width: .5px; border - bottom: solid; border - bottom - color:#BC6525; border - bottom - width: .5px'>" + reponame + "</td>" + "<td style='border-right: solid; border - color:#BC6525; font - size: 8pt; color:#BC6525; border - width: .5px; border - bottom: solid; border - bottom - color:#BC6525; border - bottom - width: .5px'>" + item + "</td>"  + "</tr>";
                         $('#tbldll tbody').append(rows);
                     });
                 },
               error: function (data) {
-
+                  document.getElementById('tbldll').style.visibility = "hidden";
+                  document.getElementById('tblreptodllheader').style.visibility = "hidden";
                   //ShowProgress();
                   //$("#divLoader").hide();
                  
@@ -270,7 +272,8 @@
                   $.each(data, function (key, value) {
                    
                       $.each(value, function (i, item) {
-                          
+                          document.getElementById('tbldllmapping').style.visibility = "visible";
+                          document.getElementById('Export').style.visibility = "visible";
                           var rows = "<tr>" + "<td style='border-right: solid; border - color:#BC6525; font - size: 8pt; color:#BC6525; border - width: .5px; border - bottom: solid; border - bottom - color:#BC6525; border - bottom - width: .5px'>" + key + "</td>" + "<td style='border-right: solid; border - color:#BC6525; font - size: 8pt; color:#BC6525; border - width: .5px; border - bottom: solid; border - bottom - color:#BC6525; border - bottom - width: .5px'>" + item + "</td>" + "</tr>";
                           $('#tbldllmapping tbody').append(rows);
                          
