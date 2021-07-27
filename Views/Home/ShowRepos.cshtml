@@ -1,0 +1,372 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model IEnumerable<AcessGitRepositories.Models.ShowOrgRepo>
+<style type="text/css">
+
+    div#spinner {
+        display: none;
+        width: 100px;
+        height: 100px;
+        position: fixed;
+        top: 60%;
+        left: 50%;
+        text-align: center;
+        margin-left: -50px;
+        margin-top: -100px;
+        z-index: 2;
+        overflow: auto;
+    }
+
+    .loading {
+        font-family: Arial;
+        font-size: 10pt;
+        border: 1px solid black;
+        width: 170px;
+        height: 75px;
+        display: none;
+        position: absolute;
+        background-color: white;
+        z-index: 999;
+        flex-align: center;
+    }
+</style>
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<script src="~/Scripts/jquery-3.4.1.js"></script>
+<div id="divLoader" style="display:none;">
+
+    <img src="~/Content/loader.jpg" alt="Loader" />
+</div>
+<table style="width:100%">
+    <tr>
+        <td colspan="2">
+            <div class="backimage"></div>
+         
+
+        </td>
+
+    </tr>
+    <tr>
+        <td style="float:left">
+
+            @Html.Label("Repository Information:", new { style = "valign:top; font-size:20px; font-weight:bold" })
+
+        </td>
+        <td style="float:right">
+            <span id="update" style="display:none">
+
+
+            </span>
+        </td>
+
+    </tr>
+    <tr>
+        <td colspan="2">
+            <div id="mycart">
+
+
+            </div>
+
+        </td>
+    </tr>
+</table>
+<table id="tblorgrepo" style="background-color:#F9EBE1; border-color:#DEBA84; border-style:none; border-width:.5px; width: 54%" BorderWidth="1.5px" CellPadding="1" CellSpacing="1" Class="find">
+    <thead style="background-color:#BC6525; font-weight: bold;color:floralwhite; font-size:8pt">
+        <tr class="small">
+
+            <th style="font-size:6.7pt">
+                Organization Name
+            </th>
+            <th style="font-size:6.7pt">Repo Name</th>
+            <th style="font-size:6.7pt">Language</th>
+            <th style="font-size:6.7pt">Is Dotnet</th>
+            @*<th style="font-size:6.7pt">FileName</th>*@
+
+
+        </tr>
+    </thead>
+    <tbody style="border:solid; border-color:#BC6525; font-size:8pt">
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td style="border-right:solid; border-color:#BC6525; font-size:8pt; color:#BC6525; border-width:.5px;border-bottom:solid; border-bottom-color:#BC6525;border-bottom-width:.5px">
+                    @item.login
+
+
+                </td>
+                <td style="border-right:solid; border-color:#BC6525; font-size:8pt; color:#BC6525; border-width:.5px;border-bottom:solid; border-bottom-color:#BC6525;border-bottom-width:.5px">
+                    <a href="#"> @item.RepositoryName</a>
+
+                </td>
+
+                <td style="border-right:solid; border-color:#BC6525; font-size:8pt; color:#BC6525; border-width:.5px;border-bottom:solid; border-bottom-color:#BC6525;border-bottom-width:.5px">
+                    @item.language
+
+                </td>
+                <td style="border-right:solid; border-color:#BC6525; font-size:8pt; color:#BC6525; border-width:.5px;border-bottom:solid; border-bottom-color:#BC6525;border-bottom-width:.5px">
+                    @item.Isdotnet
+
+                </td>
+                <td style="border-right:solid; border-color:#BC6525; font-size:8pt; color:#BC6525; border-width:.5px;border-bottom:solid; border-bottom-color:#BC6525;border-bottom-width:.5px;display:none;">
+                    @item.branchname
+
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>
+<table style="width:100%; visibility:hidden;" id="tblreptodllheader">
+    <tr>
+        <td colspan="2">
+            <div class="backimage"></div>
+           
+
+        </td>
+
+    </tr>
+    <tr>
+        <td style="float:left">
+
+            @Html.Label("Repository to Dll Mapping:", new { style = "valign:top; font-size:20px; font-weight:bold" })
+
+        </td>
+        <td style="float:right">
+            <span id="update" style="display:none">
+
+
+            </span>
+        </td>
+
+    </tr>
+    <tr>
+        <td colspan="2">
+            <div id="mycart">
+
+
+            </div>
+
+        </td>
+    </tr>
+</table>
+<table id="tbldll" style="background-color:#F9EBE1; border-color:#DEBA84; visibility:hidden; border-style:none; border-width:.5px; width: 54%" BorderWidth="1.5px" CellPadding="1" CellSpacing="1" Class="find">
+    <thead style="background-color:#BC6525; font-weight: bold;color:floralwhite; font-size:8pt">
+        <tr class="small">
+
+
+            <th style="font-size:6.7pt">Repository Name</th>
+            <th style="font-size:6.7pt">Dll Name</th>
+
+        </tr>
+    </thead>
+    <tbody style="border:solid; border-color:#BC6525; font-size:8pt"></tbody>
+</table>
+<table style="width:100%" >
+    <tr>
+        <td colspan="2">
+            <div class="container body-content">
+                
+            </div>
+          
+
+        </td>
+        
+    </tr>
+    <tr>
+        <td style="float:left">
+
+            @Html.Label("Dll to Repository Mapping:", new { style = "valign:top; font-size:20px; font-weight:bold" })&nbsp;&nbsp; <input type="button" id="Next" value="Load" style="padding-top:2px;padding-bottom:2px; width:150px; height:30px; font-size:larger;  vertical-align:top" /> &nbsp;&nbsp;
+            <input type="button" id="Export" value="Export as CSV"  style="padding-top:2px;padding-bottom:2px; width:150px; height:30px; font-size:larger;  vertical-align:top" /> &nbsp;&nbsp;
+
+        </td>
+        <td style="float:right">
+            <span id="update" style="display:none">
+
+
+            </span>
+        </td>
+
+    </tr>
+    <tr>
+        <td colspan="2">
+            <div id="mycart">
+
+
+            </div>
+
+        </td>
+    </tr>
+</table>
+<table id="tbldllmapping"  style="background-color:#F9EBE1;  border-color:#DEBA84; border-style:none; border-width:.5px; width: 54%" BorderWidth="1.5px" CellPadding="1" CellSpacing="1" Class="find">
+    <thead style="background-color:#BC6525; font-weight: bold;color:floralwhite; font-size:8pt">
+        <tr class="small">
+
+
+            <th style="font-size:6.7pt">Dll Name</th>
+            <th style="font-size:6.7pt">Repository Name</th>
+
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $("#tblorgrepo tbody tr").click(function () {
+
+            var orgname = $(this).closest('tr').find('td:eq(0)').text().trim();
+            var reponame = $(this).closest('tr').find('td:eq(1)').text().trim();
+            var branchname = $(this).closest('tr').find('td:eq(4)').text().trim();
+            var language = $(this).closest('tr').find('td:eq(2)').text().trim();
+            if (language == "C#") {
+                $('#addlink').click(function (e) {
+                    e.preventDefault();
+                });
+            }
+          $.ajax({
+                type: 'GET',
+                url: '@Url.Action("ShowDlls")',
+                datatype: JSON,
+              data: {
+                  'org': orgname, 'repoName': reponame, 'branch': branchname
+                },
+              success: function (data) {
+
+                  //ShowProgress();
+                    $('#tbldll tbody').empty();
+                  $.each(data, function (i, item) {
+                      document.getElementById('tbldll').style.visibility = "visible";
+                      var rows = "<tr>" + "<td style='border-right: solid; border - color:#BC6525; font - size: 8pt; color:#BC6525; border - width: .5px; border - bottom: solid; border - bottom - color:#BC6525; border - bottom - width: .5px'>" + reponame + "</td>" + "<td style='border-right: solid; border - color:#BC6525; font - size: 8pt; color:#BC6525; border - width: .5px; border - bottom: solid; border - bottom - color:#BC6525; border - bottom - width: .5px'>" + item + "</td>"  + "</tr>";
+                        $('#tbldll tbody').append(rows);
+                    });
+                },
+              error: function (data) {
+
+                  //ShowProgress();
+                  //$("#divLoader").hide();
+                 
+                  alert('error');
+              }
+            });
+        });
+        $("#Next").click(function () {
+            
+                $.ajax({
+                type: 'GET',
+                url: '@Url.Action("ShowDllRepoDepenencyMap")',
+                datatype: JSON,
+              //data: {
+              //    'org': orgname, 'repoName': reponame, 'branch': branchname
+              //  },
+              success: function (data) {
+                 
+                  //ShowProgress();
+                  $('#tbldllmapping tbody').empty();
+                  $.each(data, function (key, value) {
+                   
+                      $.each(value, function (i, item) {
+                          
+                          var rows = "<tr>" + "<td style='border-right: solid; border - color:#BC6525; font - size: 8pt; color:#BC6525; border - width: .5px; border - bottom: solid; border - bottom - color:#BC6525; border - bottom - width: .5px'>" + key + "</td>" + "<td style='border-right: solid; border - color:#BC6525; font - size: 8pt; color:#BC6525; border - width: .5px; border - bottom: solid; border - bottom - color:#BC6525; border - bottom - width: .5px'>" + item + "</td>" + "</tr>";
+                          $('#tbldllmapping tbody').append(rows);
+                         
+                      });
+                    });
+                },
+              error: function (data) {
+                  $("#tbldllmapping").style.visibility = "hidden";
+                  //ShowProgress();
+                  //$("#divLoader").hide();
+                 
+              }
+            });
+        });
+        $("#Export").on('click', function (event) {
+           
+            exportTableToCSV.apply(this, [$('#tbldllmapping '), 'export.csv']);
+
+            // IF CSV, don't do event.preventDefault() or return false
+            // We actually need this to be a typical hyperlink
+        });
+    });
+    function exportTableToCSV($table, filename) {
+
+        var $rows = $table.find('tr:has(td),tr:has(th)'),
+
+            // Temporary delimiter characters unlikely to be typed by keyboard
+            // This is to avoid accidentally splitting the actual contents
+            tmpColDelim = String.fromCharCode(11), // vertical tab character
+            tmpRowDelim = String.fromCharCode(0), // null character
+
+            // actual delimiter characters for CSV format
+            colDelim = '","',
+            rowDelim = '"\r\n"',
+
+            // Grab text from table into CSV formatted string
+            csv = '"' + $rows.map(function (i, row) {
+                var $row = $(row), $cols = $row.find('td,th');
+
+                return $cols.map(function (j, col) {
+                    var $col = $(col), text = $col.text();
+
+                    return text.replace(/"/g, '""'); // escape double quotes
+
+                }).get().join(tmpColDelim);
+
+            }).get().join(tmpRowDelim)
+                .split(tmpRowDelim).join(rowDelim)
+                .split(tmpColDelim).join(colDelim) + '"',
+
+
+
+            // Data URI
+            csvData = 'data:application/csv;charset=utf-8,' + encodeURIComponent(csv);
+
+       
+        downloadFile(filename,csv)
+        //if (window.navigator.msSaveBlob) { // IE 10+
+        //    alert('IE' + csv);
+        //    window.navigator.msSaveOrOpenBlob(new Blob([csv], { type: "text/plain;charset=utf-8;" }), "csvname.csv")
+        //}
+        //else {
+        //    alert('else' + csv);
+        //    $(this).attr({ 'download': filename, 'href': csvData, 'target': '_blank' });
+        //}
+    }
+    function downloadFile(filename, csvContent) {
+        var blob = new Blob([csvContent]);
+        var needsClick = true;
+        var browser = "";
+        if (window.webkitURL) {
+            browser = "CHROME";
+            var link = document.createElement("a");
+            link.setAttribute("href", "data:text/csv;charset=utf-8," + encodeURI(csvContent));
+            link.setAttribute("target", "_blank");
+            link.setAttribute("download", filename);
+            link.click();
+        } else {
+            if (document.createEvent) {
+                browser = "FIREFOX";
+                var link = document.createElement("a");
+                link.setAttribute("href", encodeURI("data:text/csv;charset=utf-8," + csvContent));
+                link.setAttribute("download", filename);
+                var e = document.createEvent('MouseEvents');
+                e.initEvent('click', true, true);
+                needsClick = link.dispatchEvent(e);
+            }
+            if (needsClick) {
+                if (window.navigator.msSaveBlob != undefined) {
+                    browser = "IE";
+                    window.navigator.msSaveBlob(blob, filename);
+                }
+            }
+        }
+        console.log(browser);
+    }
+    // This must be a hyperlink
+ 
+</script>

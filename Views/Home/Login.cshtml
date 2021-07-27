@@ -1,0 +1,223 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model AcessGitRepositories.Models.Login
+@using (Html.BeginForm())
+{
+    @Html.ValidationSummary(true)
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <text style="color:red"> @ViewBag.Message</text>
+    <link href="~/Content/Style.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
+    <script src="~/Scripts/jquery-3.4.1.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            if ($('input[name="URLType"]:checked').val() == 'Good') {
+                //do something
+            }
+            $('input[name="URLType"]').click
+                (function () {
+                    var dvurlvalue = document.getElementById("dvurlvalue");
+                    var dvurl = document.getElementById("dvurl");
+                    if ($('input[name="URLType"]:checked').val() == 'Enterprise') {
+
+                        dvurlvalue.style.display = "block";
+                        dvurl.style.display = "block";
+                    }
+                    else {
+                        dvurlvalue.style.display = "none";
+                        dvurl.style.display = "none";
+                    }
+                });
+            $("#Create").click(function () {
+                if ($("#UserName").val() == "") {
+                    $("#UserName").focus();
+                    alert("Please enter User name.");
+                    return false;
+                }
+                if ($("#Token").val() == "") {
+                    $("#Token").focus();
+                    alert("Please enter Token.");
+                    return false;
+                }
+                if ($('input[name="URLType"]:checked').val() == 'Enterprise') {
+                    if ($("#txturl").val() == "") {
+                        alert("Please enter Github URL.");
+                        $("#txturl").focus();
+                        return false;
+                    }
+                    else {
+                        if (isUrlValid($("#txturl").val()) == true) {
+                            return true;
+                        }
+                        else {
+                            alert("Please enter correct URL.");
+                            $("#txturl").focus();
+                            return false;
+                        }
+                    }
+                }
+            });
+        });
+        function isUrlValid(userInput) {
+  
+            var regexp = /(ftp|http|https):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/
+          
+            return regexp.test(userInput);
+}
+    </script>
+</head>
+<body>
+    <table style="width: 100%">
+
+        <tr>
+            <td style="width:15%">
+
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.UserName)
+                </div>
+            </td>
+            <td style="width:15%">
+                <div>
+                    @Html.EditorFor(model => model.UserName)
+
+                    @Html.ValidationMessageFor(model => model.UserName)
+                </div>
+            </td>
+        </tr>
+        <tr></tr>
+        <tr>
+            <td style="width:15%" colspan="2"></td>
+        </tr>
+        <tr>
+            <td style="width:15%">
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.Token)
+                </div>
+            </td>
+            <td style="width:15%">
+                <div>
+                    @Html.EditorFor(model => model.Token)
+                    @Html.ValidationMessageFor(model => model.Token)
+                </div>
+            </td>
+            <td style="width:10%"></td>
+
+            <td style="width: 5%">
+            </td>
+        </tr>
+        <tr>
+            <td style="width:15%">
+                <div class="editor-label">
+                    @Html.Label("Github Type")
+                </div>
+            </td>
+            <td style="width:15%">
+                <div>
+                    @*Public
+                    @Html.RadioButton("Public","rdlpublic", new { selected=true})
+                    Enterprise
+                    @Html.RadioButton("Enterprise","rdlenterprise")*@
+                    Public
+                    <input id="URLType" name="URLType" value="Public" type="radio" checked="checked" />
+                    Enterprise
+                    <input id="URLType" name="URLType" value="Enterprise" type="radio"/>
+                </div>
+            </td>
+            <td style="width:10%"></td>
+
+            <td style="width: 5%">
+            </td>
+        </tr>
+        <tr>
+
+            <td style="width:15%">
+                <div id="dvurl" style="display: none" class="editor-label">
+                    @Html.Label("Github URL")
+                </div>
+            </td>
+            <td style="width:15%">
+                <div id="dvurlvalue" style="display: none">
+              @Html.TextBox("txturl")
+                   
+                </div>
+            </td>
+            <td style="width:10%"></td>
+
+            <td style="width: 5%">
+            </td>
+        </tr>
+        <tr>
+            <td style="width:15%">
+                <div class="editor-label">
+
+                </div>
+            </td>
+            <td style="width:15%">
+                <div class="editor-field">
+                    <input type="submit" id="Create" value="Submit" style="padding-top:1px;padding-bottom:1px;width:90px; float:left" />
+                </div>
+            </td>
+            <td style="width:10%"></td>
+
+            <td style="width: 5%">
+            </td>
+        </tr>
+        <tr>
+            @*    <td>
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.Engr_Empcode)
+                </div>
+
+            </td>
+            <td>
+
+                <div class="editor-field">
+                    @Html.EditorFor(model => model.Engr_Empcode)
+                    @Html.ValidationMessageFor(model => model.Engr_Empcode)
+                </div>
+
+            </td>*@
+            <td>
+
+                <div class="editor-label">
+
+                </div>
+            </td>
+            <td>
+                <div class="editor-field">
+
+                </div>
+            </td>
+        </tr>
+    </table>
+    <table style="width:50%">
+        <tr>
+            <td>
+            </td>
+        </tr>
+
+        <tr>
+            <td style="padding-right:100px;float:left">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p>
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp</td>
+        </tr>
+    </table>
+
+</body>
+
+</html>
+   
+}
