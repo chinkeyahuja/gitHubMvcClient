@@ -35,19 +35,19 @@ namespace AcessGitRepositories.Controllers
         {
 
 
-            IList<Repository> repository;
+            List<Repository> repositoryList = new List<Repository>();
             List<ShowOrgRepo> showOrgRepos = new List<ShowOrgRepo>();
 
             IList<Organization> organizations = getOrgList();
             List<string> dllList = new List<string>();
-
+            string username = (string) Session["username"];
             //Iterate Over Organizationbs to Get Repos List
             foreach (var org in organizations)
             {
-                repository = getOrgRepos(org.reposurl);
+                repositoryList.AddRange(getOrgRepos(org.reposurl));
 
 
-                foreach (var repo in repository)
+                foreach (var repo in repositoryList)
                 {
                     if (repo.language == "C#" || repo.language == "JavaScript")
                     {
@@ -60,6 +60,20 @@ namespace AcessGitRepositories.Controllers
                         showOrgRepos.Add(new ShowOrgRepo() { login = org.login, RepositoryName = repo.RepositoryName, language = repo.language, Isdotnet = false, branchname = repo.branchname });
                     }
 
+                }
+            }
+
+            foreach (var r in getUserRepos("search/repositories?q=user:" + username))
+            {
+                if (r.language == "C#" || r.language == "JavaScript")
+                {
+
+                    showOrgRepos.Add(new ShowOrgRepo() { login = "", RepositoryName = r.RepositoryName, language = r.language, Isdotnet = true, branchname = r.branchname });
+
+                }
+                else
+                {
+                    showOrgRepos.Add(new ShowOrgRepo() { login = "", RepositoryName = r.RepositoryName, language = r.language, Isdotnet = false, branchname = r.branchname });
                 }
             }
            
@@ -114,6 +128,16 @@ namespace AcessGitRepositories.Controllers
             Task<string> jsonData = getGitHubApiJson(repoUrl);
             string jsonResult = jsonData.Result;
             repoList.AddRange(GetListofRepository<Repository>(jsonResult).ToList());
+            return repoList;
+        }
+        private List<Repository> getUserRepos(string repoUrl)
+        {
+            List<Repository> repoList = new List<Repository>();
+
+            Task<string> jsonData = getGitHubApiJson(repoUrl);
+            string jsonResult = jsonData.Result;
+            var itemArray = JObject.Parse(jsonResult)["items"];
+            repoList.AddRange(GetListofRepository<Repository>(itemArray.ToString()));
             return repoList;
         }
         private List<Organization> getOrgList()
@@ -198,9 +222,16 @@ namespace AcessGitRepositories.Controllers
         }
         public IList<Filename> GetCsProjFiles(string orgname, string Reponame, string branchname)
         {
-
-
-            string URL = "repos/" + orgname + "/" + Reponame + "/git/trees/" + branchname + "?recursive=1";
+            string URL = "";
+            if (orgname == "")
+            {
+                string usrname = (string) Session["username"];
+                URL = "repos/" + usrname + "/" + Reponame + "/git/trees/" + branchname + "?recursive=1";
+            }
+            else
+            {
+                URL = "repos/" + orgname + "/" + Reponame + "/git/trees/" + branchname + "?recursive=1";
+            }
             Task<string> t1 = getGitHubApiJson(URL);
 
             string checkResult1 = t1.Result;
@@ -244,8 +275,16 @@ namespace AcessGitRepositories.Controllers
         public List<string> GetDllListFromCsProj(string orgname, string reponame, string filename)
         {
 
-
-            string URL = "repos/" + orgname + "/" + reponame + "/contents/" + filename;
+            string URL = "";
+            if (orgname == "")
+            {
+                string usrname = (string)Session["username"];
+                URL = "repos/" + usrname + "/" + reponame + "/contents/" + filename;
+            }
+            else
+            {
+                URL = "repos/" + orgname + "/" + reponame + "/contents/" + filename;
+            }
 
             Task<string> t1 = getGitHubApiJson(URL);
 
@@ -392,6 +431,7 @@ namespace AcessGitRepositories.Controllers
                 //client.BaseAddress = new Uri("https://api.github.com");
                 //HTTP GET
                 var token = "token " + login.Token;
+                Session["username"] = login.UserName;
                 Session["Token"] = token;
                 string URL = Request.Form["txturl"];
                 Session["URL"] = URL;
